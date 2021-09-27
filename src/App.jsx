@@ -1,23 +1,13 @@
 import React, { useState } from 'react';
+import UploadImage from './components/UploadImage.jsx';
 
 const App = () => {
+
   return (
-    <></>
+    <>
+      <UploadImage />
+    </>
   )
 }
-
-// class App extends React.Component {
-//   constructor(props) {
-//     super(props);
-
-//     this.state = {};
-//   }
-
-//   render() {
-//     return (
-//       <></>
-//     )
-//   }
-// }
 
 export default App;
