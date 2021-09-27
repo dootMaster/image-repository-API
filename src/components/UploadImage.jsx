@@ -14,7 +14,9 @@ class UploadImage extends React.Component {
   onFormSubmit(e){
   e.preventDefault();
   const formData = new FormData();
-  formData.append('myImage', this.state.file);
+  for (const key of Object.keys(this.state.file)) {
+    formData.append('img', this.state.file[key])
+  }
   const config = {
     headers: {
       'content-type': 'multipart/form-data'
@@ -22,7 +24,7 @@ class UploadImage extends React.Component {
   };
   axios.post("/upload-profile-pic", formData, config)
     .then((response) => {
-      alert('maybe');
+      console.log(response);
     }).catch((error) => {
       console.log(error);
       alert("Your file could not be uploaded at this time.")
@@ -30,14 +32,14 @@ class UploadImage extends React.Component {
   }
 
   onChange(e) {
-    this.setState({file:e.target.files[0]});
+    this.setState({file: e.target.files});
   }
 
   render() {
     return (
       <form onSubmit={this.onFormSubmit}>
         <h1>File Upload</h1>
-          <input type="file" name="myImage" enctype="multipart/form-data" onChange={this.onChange} />
+          <input type="file" name="img" encType="multipart/form-data" multiple onChange={this.onChange} />
           <button type="submit">Upload</button>
       </form>
     )

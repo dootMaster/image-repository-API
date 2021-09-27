@@ -18,13 +18,9 @@ const storage = multer.diskStorage({
   }
 });
 
-app.get('/', async (req, res) => {
-  res.send('hello');
-});
-
 app.post('/upload-profile-pic', (req, res) => {
   // 'profile_pic' is the name of our file input field in the HTML form
-  let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('myImage');
+  let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).array('img', 5);
 
   upload(req, res, function(err) {
       if (req.fileValidationError) {
