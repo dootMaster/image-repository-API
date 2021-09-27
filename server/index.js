@@ -29,36 +29,44 @@ const storage = multer.diskStorage({
 app.get('/get',(req, res) => {
   const r = fs.createReadStream('./uploads\\img-1632731052840.jpg')
   const ps = new stream.PassThrough()
-  stream.pipeline(
-   r,
-   ps,
-   (err) => {
+  stream.pipeline(r, ps, (err) => {
     if (err) {
       console.log(err)
       return res.sendStatus(400);
     }
-  })
-  ps.pipe(res)
+  });
+  ps.pipe(res);
 })
 
-app.post('/upload-profile-pic', (req, res) => {
+app.post('/upload-profile-pic', async (req, res) => {
   let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).array('img', 5);
 
-  upload(req, res, function(err) {
-      if (req.fileValidationError) {
-          return res.send(req.fileValidationError);
-      }
-      else if (!req.file) {
-          return res.send('Please select an image to upload');
-      }
-      else if (err instanceof multer.MulterError) {
-          return res.send(err);
-      }
-      else if (err) {
-          return res.send(err);
-      }
+  await upload(req, res, function(err) {
+    if (req.fileValidationError) {
+        return res.send(req.fileValidationError);
+    }
+    else if (!req.files) {
+        return res.send('Please select an image to upload');
+    }
+    else if (err instanceof multer.MulterError) {
+        return res.send(err);
+    }
+    else if (err) {
+        return res.send(err);
+    }
 
-      res.status(200).send('Upload successful.');
+    let imgData = req.files.map(data => {
+      return ({
+        title: data.originalname,
+        img_path: data.path,
+      })
+    })
+
+    knex('images').insert(imgData)
+    .then(() => console.log('img data inserted into table'))
+    .catch(() => console.log('failed to insert data into table'));
+
+    res.status(200).send('Upload successful.');
   });
 });
 

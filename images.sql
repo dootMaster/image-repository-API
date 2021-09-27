@@ -1,7 +1,7 @@
 DROP TABLE images;
 
 CREATE TABLE images (
-  img_id SERIAL PRIMARY KEY UNIQUE,
-  title VARCHAR(45) NOT NULL,
-  img TEXT NOT NULL
+  id SERIAL PRIMARY KEY UNIQUE,
+  title TEXT NOT NULL,
+  img_path TEXT NOT NULL
 );
