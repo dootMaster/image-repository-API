@@ -6,14 +6,11 @@ const path = require('path');
 const multer = require('multer');
 const helpers = require('./helpers');
 
-// fs
-const fs = require('fs');
-const stream = require('stream');
-
 // postgres via knex
-const knex = require('../db/index.js');
+const models = require('../db/models.js');
 
 app.use(express.static(path.join(__dirname, '../docs')));
+app.use('/uploads', express.static('uploads'));
 app.set('port', process.env.PORT || 3000);
 
 const storage = multer.diskStorage({
@@ -22,49 +19,42 @@ const storage = multer.diskStorage({
   },
 
   filename: function(req, file, cb) {
-      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+      cb(null, file.originalname + '-' + Date.now() + path.extname(file.originalname));
   }
 });
 
-app.get('/get',(req, res) => {
-  const r = fs.createReadStream('./uploads\\img-1632731052840.jpg')
-  const ps = new stream.PassThrough()
-  stream.pipeline(r, ps, (err) => {
-    if (err) {
-      console.log(err)
-      return res.sendStatus(400);
-    }
-  });
-  ps.pipe(res);
+app.get('/get', (req, res) => {
+  models.getFilenames()
+    .then(response => {
+      res.status(200).send(response);
+    })
+    .catch(err => console.log(err));
 })
 
-app.post('/upload-profile-pic', async (req, res) => {
+app.post('/upload', async (req, res) => {
   let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).array('img', 5);
 
   await upload(req, res, function(err) {
     if (req.fileValidationError) {
-        return res.send(req.fileValidationError);
+      return res.send(req.fileValidationError);
     }
     else if (!req.files) {
-        return res.send('Please select an image to upload');
+      return res.send('Please select an image to upload');
     }
-    else if (err instanceof multer.MulterError) {
-        return res.send(err);
+    else if (err instanceof multer.MulterError || err) {
+      return res.send(err);
     }
-    else if (err) {
-        return res.send(err);
-    }
+
+    console.log(req.files);
 
     let imgData = req.files.map(data => {
       return ({
         title: data.originalname,
-        img_path: data.path,
+        img_path: data.filename,
       })
     })
 
-    knex('images').insert(imgData)
-    .then(() => console.log('img data inserted into table'))
-    .catch(() => console.log('failed to insert data into table'));
+    models.insertMetaData(imgData);
 
     res.status(200).send('Upload successful.');
   });

@@ -1,0 +1,66 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: salmon;
+  font-family: 'Barlow', sans-serif;
+}
+
+.View {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5% 30% 5% 30%;
+  height: min-content;
+}
+
+.Form {
+  display: flex;
+  background-color: gray;
+  justify-content: center;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.form-button, .form-input {
+  padding: 0.7em 1.4em;
+  margin:0 0.25em 0.5em 0.25em;
+  border-radius:5px;
+  box-sizing: border-box;
+  text-decoration:none;
+  font-family:'Roboto',sans-serif;
+  font-size: 2rem;
+  color: white;
+  background-color:salmon;
+  text-align:center;
+  height: 5rem;
+  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+  outline: none;
+  transition: 0.1s all;
+  text-shadow: 7px 6px 12px rgba(0, 0, 0, .5);
+  border: none;
+  cursor: pointer;
+}
+
+.form-button:active {
+  transform: scale(0.95);
+  /* Scaling button to 0.98 to its original size */
+  box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+  /* Lowering the shadow */
+}
+
+.Image {
+  width:'100%';
+  height:'auto';
+  border-radius: 5px;
+  margin: 2rem 0 2rem 0;
+}
+
+h1 {
+  font-size: 6rem;
+  text-align: center;
+  padding: 1rem;
+  text-shadow: 7px 6px 16px rgba(0, 0, 0, .5);
+}
