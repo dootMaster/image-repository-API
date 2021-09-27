@@ -1,9 +1,17 @@
+// express & middleware
 const express = require('express');
 const app = express();
 const port = 3000;
 const path = require('path');
 const multer = require('multer');
 const helpers = require('./helpers');
+
+// fs
+const fs = require('fs');
+const stream = require('stream');
+
+// postgres via knex
+const knex = require('../db/index.js');
 
 app.use(express.static(path.join(__dirname, '../docs')));
 app.set('port', process.env.PORT || 3000);
@@ -18,8 +26,22 @@ const storage = multer.diskStorage({
   }
 });
 
+app.get('/get',(req, res) => {
+  const r = fs.createReadStream('./uploads\\img-1632731052840.jpg')
+  const ps = new stream.PassThrough()
+  stream.pipeline(
+   r,
+   ps,
+   (err) => {
+    if (err) {
+      console.log(err)
+      return res.sendStatus(400);
+    }
+  })
+  ps.pipe(res)
+})
+
 app.post('/upload-profile-pic', (req, res) => {
-  // 'profile_pic' is the name of our file input field in the HTML form
   let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).array('img', 5);
 
   upload(req, res, function(err) {
@@ -36,9 +58,7 @@ app.post('/upload-profile-pic', (req, res) => {
           return res.send(err);
       }
 
-      res.redirect('/');
-      // Display uploaded image for user validation
-      // res.send(`You have uploaded this image: <hr/><img src="${req.file.path}" width="500"><hr /><a href="./">Upload another image</a>`);
+      res.status(200).send('Upload successful.');
   });
 });
 
