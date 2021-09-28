@@ -1,5 +1,7 @@
 import React from 'react';
 import Image from './Image.jsx';
+import ImgTitle from './ImgTitle.jsx';
+import Keywords from './Keywords.jsx';
 const axios = require('axios');
 
 class View extends React.Component {
@@ -8,6 +10,7 @@ class View extends React.Component {
 
     this.state = {
       photos: [],
+      keywords: [],
     };
   }
 
@@ -21,15 +24,30 @@ class View extends React.Component {
     .catch(err => console.log(err));
   }
 
+  searchByKeywords(e) {
+
+  }
+
   render() {
     let { photos } = this.state;
     return (
       <div className='View'>
-        {photos.map((item, i) =>
+
+        {photos.map((item) =>
+        <>
+          <ImgTitle
+            title={item.title}
+          />
           <Image
+            key={item.id}
+            title={item.title}
             url={item.img_path}
-            key={i}
-          />)}
+          />
+          <Keywords
+            title={item.title}
+          />
+        </>
+          )}
       </div>
     )
   }

@@ -5,12 +5,15 @@ const port = 3000;
 const path = require('path');
 const multer = require('multer');
 const helpers = require('./helpers');
+const bodyParser = require('body-parser')
 
 // postgres via knex
 const models = require('../db/models.js');
 
 app.use(express.static(path.join(__dirname, '../docs')));
 app.use('/uploads', express.static('uploads'));
+let jsonParser = bodyParser.json();
+
 app.set('port', process.env.PORT || 3000);
 
 const storage = multer.diskStorage({
@@ -31,21 +34,35 @@ app.get('/get', (req, res) => {
     .catch(err => console.log(err));
 })
 
+app.get('/keywords/:image', (req, res) => {
+  models.getKeywords(req, res)
+    .then(response => {
+      res.status(200).send(JSON.stringify(response));
+    })
+    .catch(err => console.log(err));
+})
+
+app.post('/addKeyword/:image/:word', (req, res) => {
+  models.addKeyword(req, res)
+    .then(response => {
+      res.status(200).send(JSON.stringify(response));
+    })
+    .catch(err => console.log(err));
+})
+
 app.post('/upload', async (req, res) => {
-  let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).array('img', 5);
+  let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).array('img', 10);
 
   await upload(req, res, function(err) {
     if (req.fileValidationError) {
-      return res.send(req.fileValidationError);
+      return res.status(400).send(req.fileValidationError);
     }
     else if (!req.files) {
-      return res.send('Please select an image to upload');
+      return res.status(400).send('Please select an image to upload');
     }
     else if (err instanceof multer.MulterError || err) {
-      return res.send(err);
+      return res.status(400).send(err);
     }
-
-    console.log(req.files);
 
     let imgData = req.files.map(data => {
       return ({
@@ -56,7 +73,7 @@ app.post('/upload', async (req, res) => {
 
     models.insertMetaData(imgData);
 
-    res.status(200).send('Upload successful.');
+    res.status(200).redirect('http://localhost:3000/');
   });
 });
 

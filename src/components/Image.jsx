@@ -1,8 +1,8 @@
 import React from 'react';
 
-function Image ({ url }) {
+function Image ({ key, title, url }) {
   return (
-    <img className='Image' src={`http://localhost:3000/uploads/${url}`}></img>
+      <img className='Image' src={`http://localhost:3000/uploads/${url}`}></img>
   )
 }
 

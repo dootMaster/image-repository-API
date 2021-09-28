@@ -2,14 +2,27 @@ const knex = require('./index.js');
 const fs = require('fs');
 const stream = require('stream');
 
-function insertMetaData(data) {
-  knex('images').insert(data)
+async function insertMetaData(data) {
+  await knex('images').insert(data)
   .then(() => console.log('img data inserted into table'))
   .catch(() => console.log('failed to insert data into table'));
 };
 
-function getFilenames() {
-  return knex('images').select('img_path');
+async function getFilenames() {
+  return await knex('images').select('id', 'title', 'img_path');
 }
 
-module.exports = { insertMetaData, getFilenames };
+async function getKeywords(req, res) {
+  return await knex('keywords').select('keyword').where({
+    title: req.params.image
+  });
+}
+
+async function addKeyword(req, res) {
+  return await knex('keywords').insert({
+    title: req.params.image,
+    keyword: req.params.word,
+  });
+}
+
+module.exports = { insertMetaData, getFilenames, getKeywords, addKeyword };
