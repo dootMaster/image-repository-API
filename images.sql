@@ -1,3 +1,6 @@
+DROP DATABASE images;
+CREATE DATABASE images;
+
 DROP TABLE images;
 DROP TABLE keywords;
 
