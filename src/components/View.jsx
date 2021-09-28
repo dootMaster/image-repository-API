@@ -11,6 +11,7 @@ class View extends React.Component {
     this.state = {
       photos: [],
       keywords: [],
+      searchTerm: '',
     };
   }
 
@@ -24,15 +25,28 @@ class View extends React.Component {
     .catch(err => console.log(err));
   }
 
-  searchByKeywords(e) {
+  searchByKeywords(word) {
+    axios.get(`search/${word}`)
+    .then(response => {
+      this.setState({
+        photos: response.data,
+      })
+    })
+    .catch(err => console.log(err));
+  }
 
+  onChange(e) {
+    this.setState({
+      searchTerm: e.target.value,
+    })
   }
 
   render() {
-    let { photos } = this.state;
+    const { photos, searchTerm } = this.state;
     return (
       <div className='View'>
-
+        <input type="text" value={searchTerm} onChange={(e) => this.onChange(e)}></input>
+        <button onClick={() => this.searchByKeywords(searchTerm)}>Search</button>
         {photos.map((item) =>
         <>
           <ImgTitle

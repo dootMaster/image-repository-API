@@ -8,7 +8,7 @@ async function insertMetaData(data) {
   .catch(() => console.log('failed to insert data into table'));
 };
 
-async function getFilenames() {
+async function getAllFilenames() {
   return await knex('images').select('id', 'title', 'img_path');
 }
 
@@ -25,4 +25,11 @@ async function addKeyword(req, res) {
   });
 }
 
-module.exports = { insertMetaData, getFilenames, getKeywords, addKeyword };
+async function searchByKeyword(req, res) {
+  return await knex('images').join('keywords', 'images.title', '=', 'keywords.title').select('images.id', 'images.title', 'images.img_path')
+    .where({
+      keyword: req.params.keyword
+    })
+}
+
+module.exports = { insertMetaData, getAllFilenames, getKeywords, addKeyword, searchByKeyword };

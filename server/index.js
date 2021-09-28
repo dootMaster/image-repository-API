@@ -27,12 +27,12 @@ const storage = multer.diskStorage({
 });
 
 app.get('/get', (req, res) => {
-  models.getFilenames()
+  models.getAllFilenames()
     .then(response => {
       res.status(200).send(response);
     })
     .catch(err => console.log(err));
-})
+});
 
 app.get('/keywords/:image', (req, res) => {
   models.getKeywords(req, res)
@@ -40,7 +40,15 @@ app.get('/keywords/:image', (req, res) => {
       res.status(200).send(JSON.stringify(response));
     })
     .catch(err => console.log(err));
-})
+});
+
+app.get('/search/:keyword', (req, res) => {
+  models.searchByKeyword(req, res)
+    .then(response => {
+      res.status(200).send(response);
+    })
+    .catch(err => console.log(err));
+});
 
 app.post('/addKeyword/:image/:word', (req, res) => {
   models.addKeyword(req, res)
@@ -48,7 +56,7 @@ app.post('/addKeyword/:image/:word', (req, res) => {
       res.status(200).send(JSON.stringify(response));
     })
     .catch(err => console.log(err));
-})
+});
 
 app.post('/upload', async (req, res) => {
   let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).array('img', 10);
